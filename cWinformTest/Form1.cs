@@ -379,15 +379,19 @@ namespace cWinformTest
                 string sql = @"
                 USE [PXDNET]
 
-                SELECT TOP 10 
+                SELECT TOP 1000
                     M_Drug.vc_DrugCd,
                     M_Drug.vc_DrugNm,
-                    M_Method.vc_MethodNm,
+                    M_Method.vc_MethodCd,
+                    M_Method.ln_Fraction,
+                    M_Method.vc_FreeItem1,
                     M_TakeTime.vc_TakeTimeNm,
-                    M_TakeTime.vc_TakeTimeBelt
+                    M_TakeTime.vc_TakeTimeCd
+                    
+                        
                   FROM M_Drug
-                  INNER JOIN dbo.M_Method ON dbo.M_Drug.vc_DrugCd = dbo.M_Drug.vc_DrugCd
-                  INNER JOIN M_TakeTime ON dbo.M_TakeTime.vc_TakeTimeCd = M_TakeTime.vc_TakeTimeCd";
+                  INNER JOIN dbo.M_Method ON M_Drug.vc_DrugCd = M_Drug.vc_DrugCd
+                  INNER JOIN M_TakeTime ON M_TakeTime.vc_TakeTimeCd = M_TakeTime.vc_TakeTimeCd";
 
 
                 using (SqlCommand command = new SqlCommand(sql, SVR_CN))
@@ -399,12 +403,15 @@ namespace cWinformTest
                         {
                             string[] row = new string[]
                             {
-                                "0",
-                                reader["vc_DrugCd"].ToString(),
-                                reader["vc_DrugNm"].ToString(),
-                                reader["vc_MethodNm"].ToString(),
-                                reader["vc_TakeTimeNm"].ToString(),
-                                reader["vc_TakeTimeBelt"].ToString()
+                                "0",                                 // RP
+                                reader["vc_DrugCd"].ToString(),     // 약품코드
+                                reader["vc_DrugNm"].ToString(),     // 약품명
+                                "0.0",                              // 수량
+                                reader["ln_Fraction"].ToString(),   // 횟수
+                                "0",                                // 일수
+                                reader["vc_MethodCd"].ToString(),   // 용법코드
+                                reader["vc_FreeItem1"].ToString(), // 패턴
+                                reader["vc_TakeTimeCd"].ToString()  // Gcode
                             };
 
                             dataGridView.Rows.Add(row);
