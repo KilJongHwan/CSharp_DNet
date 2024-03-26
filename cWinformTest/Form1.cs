@@ -198,9 +198,13 @@ namespace cWinformTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // 데이터 설정 함수 호출 
             SetDataToDataGridView(SS);
+
+            // 긴급 버튼 비활성화
             cmdEmg.Enabled = false;
         }
+
 
         private void cmdExit_Click(object sender, EventArgs e)
         {
@@ -350,24 +354,70 @@ namespace cWinformTest
             anyForm.Text += " [ " + anyForm.Name + " ]"; // 제목 변경
         }
         // DataGridView에 데이터 설정하는 함수
+        //private void SetDataToDataGridView(DataGridView dataGridView)
+        //{
+        //    // 예시 데이터를 생성
+        //    List<string[]> data = new List<string[]>
+        //    {
+        //        new string[] { "1", "약품코드1", "약품명1", "수량1", "횟수1", "일수1", "용법1", "패턴1", "Gcode1" },
+        //        new string[] { "2", "약품코드2", "약품명2", "수량2", "횟수2", "일수2", "용법2", "패턴2", "Gcode2" },
+        //    };
+
+        //    // DataGridView에 행을 추가합니다.
+        //    foreach (string[] row in data)
+        //    {
+        //        dataGridView.Rows.Add(row);
+        //    }
+
+        //    // 예시 데이터가 행에 잘 추가되었는지 확인합니다.
+        //    Console.WriteLine("데이터가 DataGridView에 설정되었습니다.");
+        //}
         private void SetDataToDataGridView(DataGridView dataGridView)
         {
-            // 예시 데이터를 생성
-            List<string[]> data = new List<string[]>
+            try
             {
-                new string[] { "1", "약품코드1", "약품명1", "수량1", "횟수1", "일수1", "용법1", "패턴1", "Gcode1" },
-                new string[] { "2", "약품코드2", "약품명2", "수량2", "횟수2", "일수2", "용법2", "패턴2", "Gcode2" },
-            };
+                string sql = @"
+                USE [PXDNET]
 
-            // DataGridView에 행을 추가합니다.
-            foreach (string[] row in data)
-            {
-                dataGridView.Rows.Add(row);
+                SELECT TOP 10 
+                    M_Drug.vc_DrugCd,
+                    M_Drug.vc_DrugNm,
+                    M_Method.vc_MethodNm,
+                    M_TakeTime.vc_TakeTimeNm,
+                    M_TakeTime.vc_TakeTimeBelt
+                  FROM M_Drug
+                  INNER JOIN dbo.M_Method ON dbo.M_Drug.vc_DrugCd = dbo.M_Drug.vc_DrugCd
+                  INNER JOIN M_TakeTime ON dbo.M_TakeTime.vc_TakeTimeCd = M_TakeTime.vc_TakeTimeCd";
+
+
+                using (SqlCommand command = new SqlCommand(sql, SVR_CN))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // 데이터 처리
+                        while (reader.Read())
+                        {
+                            string[] row = new string[]
+                            {
+                                "0",
+                                reader["vc_DrugCd"].ToString(),
+                                reader["vc_DrugNm"].ToString(),
+                                reader["vc_MethodNm"].ToString(),
+                                reader["vc_TakeTimeNm"].ToString(),
+                                reader["vc_TakeTimeBelt"].ToString()
+                            };
+
+                            dataGridView.Rows.Add(row);
+                        }
+                    }
+                }
             }
-
-            // 예시 데이터가 행에 잘 추가되었는지 확인합니다.
-            Console.WriteLine("데이터가 DataGridView에 설정되었습니다.");
+            catch (Exception ex)
+            {
+                MessageBox.Show("데이터 그리드뷰에 데이터를 설정하는데 실패했습니다: " + ex.Message);
+            }
         }
 
     }
 }
+
