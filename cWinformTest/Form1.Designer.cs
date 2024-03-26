@@ -434,61 +434,7 @@ namespace cWinformTest
             Panel2.VerticalScrollbarSize = 10;
         }
         #endregion
-        // 데이터베이스 연결 초기화 메서드
-        private void InitializeDatabaseConnection()
-        {
-            string dataSource = "(local)";
-            string initialCatalog = "PXDNET";
-            string userID = "sa";
-            string password = "yuyama";
-            bool persistSecurityInfo = true;
-            //string provider = "SQLOLEDB.1";
-            int connectTimeout = 180;
 
-            string connectionString = $"Data Source={dataSource};Initial Catalog={initialCatalog};User ID={userID};Password={password};Persist Security Info={persistSecurityInfo};Connect Timeout={connectTimeout}";
-
-            SVR_CN = new SqlConnection(connectionString); // SVR_CN 초기화
-
-            try
-            {
-                SVR_CN.Open();
-                Console.WriteLine("데이터베이스 연결 성공!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("데이터베이스 연결 실패: " + ex.Message);
-            }
-        }
-
-
-        // 데이터베이스 서버와의 연결을 확인하는 메서드
-        public bool CheckServerConnection()
-        {
-            try
-            {
-                if (SVR_CN != null && SVR_CN.State == ConnectionState.Open)
-                {
-                    Console.WriteLine("데이터베이스 서버 연결 상태: 오픈");
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine("데이터베이스 서버 연결 상태: 닫힘");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("데이터베이스 서버 연결 상태 확인 실패: " + ex.Message);
-                return false;
-            }
-        }
-
-        // 다른 메서드나 이벤트 핸들러에서 데이터베이스 연결 상태를 확인할 수 있도록 public 메서드 제공
-        public bool IsDatabaseConnected()
-        {
-            return CheckServerConnection();
-        }
 
         
         private MetroFramework.Controls.MetroPanel metroPanel1;
