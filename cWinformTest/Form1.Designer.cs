@@ -2,15 +2,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using MetroFramework.Animation;
-using System.Threading.Tasks;
 using MetroFramework.Controls;
-using System.Xml;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Collections.Generic;
-
 namespace cWinformTest
 {
     partial class Form1
@@ -142,6 +134,7 @@ namespace cWinformTest
             this.txtTunum.Size = new System.Drawing.Size(193, 30);
             this.txtTunum.TabIndex = 2;
             this.txtTunum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTunum_KeyPress);
+            this.txtTunum.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTunum_KeyDown);
             // 
             // cmdJoje
             // 

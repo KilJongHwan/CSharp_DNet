@@ -8,8 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using MetroFramework.Controls;
 using MetroFramework.Forms;
+using SoapHttpClient;
+using SoapHttpClient.Enums;
 
 namespace cWinformTest
 {
@@ -50,8 +53,12 @@ namespace cWinformTest
 
         public System.Data.SqlClient.SqlConnection SVR_CN; // SQL Server 연결 객체
 
+        private readonly BackgroundWorker bw = new BackgroundWorker();
+        private DataTable dt;
 
-        private bool isRunning = false;
+        private bool isRunning;
+        private bool bDataFind;
+
         public Form1()
         {
             InitializeComponent();
@@ -66,8 +73,60 @@ namespace cWinformTest
 
             // Form의 Resize 이벤트 핸들러 등록
             this.Resize += Form1_Resize;
+
+            bw.DoWork += Bw_DoWork;
+            bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+
+            dt = new DataTable();
+
+            isRunning = false;
+            bDataFind = false;
         }
-       
+        private async void Bw_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var id = e.Argument as string;
+            //dt = await LoadDataPas(id);
+        }
+
+
+        //public async Task<DataTable> LoadDataPas(string patientId)
+        //{
+
+        //}
+
+        private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show("데이터 로딩 오류: " + e.Error.Message);
+                return;
+            }
+
+            SetData(dt);
+
+            this.Enabled = true;
+        }
+
+
+        private void txtTunum_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!isRunning)
+                {
+                    if (IsDatabaseConnected())
+                    {
+                        bw.RunWorkerAsync(txtTunum.Text); // 데이터 로딩 시작
+                    }
+                    else
+                    {
+                        MessageBox.Show("데이터베이스에 접속을 실패하였습니다.");
+                        return;
+                    }
+                }
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             int step = 1;
@@ -75,11 +134,6 @@ namespace cWinformTest
             if (ProgressBar1.Value == ProgressBar1.Maximum)
             {
                 ProgressBar1.Value = ProgressBar1.Minimum;
-            }
-            else
-            {
-                //timer1.Stop();
-                //ProgressBar1.Enabled = false;
             }
         }
 
@@ -107,7 +161,7 @@ namespace cWinformTest
                     return;
                 }
             }
-
+            // 토글버튼
             isRunning = !isRunning;
         }
         // 데이터베이스 연결 초기화 메서드
@@ -374,8 +428,6 @@ namespace cWinformTest
         }
         private async Task<DataTable> LoadDataAsync(string date)
         {
-            DataTable dt = new DataTable();
-
             // 데이터 테이블에 컬럼 추가
             dt.Columns.Add("RP", typeof(string));
             dt.Columns.Add("약품코드", typeof(string));
@@ -410,7 +462,7 @@ namespace cWinformTest
                     // 데이터 처리
                     while (reader.Read())
                     {
-                        string[] row = new string[]
+                         string[] row = new string[]
                         {
                             "0",                // RP
                             reader["vc_DrugCd"].ToString(),   // 약품코드
