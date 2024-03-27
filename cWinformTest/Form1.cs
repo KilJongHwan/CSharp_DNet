@@ -96,9 +96,10 @@ namespace cWinformTest
                 // 시작 버튼 클릭 시
                 if (IsDatabaseConnected())
                 {
+                    DataTable dt = await LoadDataAsync(txtDate.Value.ToString("yyyy-MM-dd"));
                     await StartProgressBarFillAsync();
+                    SetData(dt);
                     cmdJoje.Text = "중지";
-
                 }
                 else
                 {
@@ -198,8 +199,7 @@ namespace cWinformTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // 데이터 설정 함수 호출 
-            SetDataToDataGridView(SS);
+            SetGridView(SS);
 
             // 긴급 버튼 비활성화
             cmdEmg.Enabled = false;
@@ -354,29 +354,40 @@ namespace cWinformTest
             anyForm.Text += " [ " + anyForm.Name + " ]"; // 제목 변경
         }
         // DataGridView에 데이터 설정하는 함수
-        //private void SetDataToDataGridView(DataGridView dataGridView)
-        //{
-        //    // 예시 데이터를 생성
-        //    List<string[]> data = new List<string[]>
-        //    {
-        //        new string[] { "1", "약품코드1", "약품명1", "수량1", "횟수1", "일수1", "용법1", "패턴1", "Gcode1" },
-        //        new string[] { "2", "약품코드2", "약품명2", "수량2", "횟수2", "일수2", "용법2", "패턴2", "Gcode2" },
-        //    };
-
-        //    // DataGridView에 행을 추가합니다.
-        //    foreach (string[] row in data)
-        //    {
-        //        dataGridView.Rows.Add(row);
-        //    }
-
-        //    // 예시 데이터가 행에 잘 추가되었는지 확인합니다.
-        //    Console.WriteLine("데이터가 DataGridView에 설정되었습니다.");
-        //}
-        private void SetDataToDataGridView(DataGridView dataGridView)
+        private void SetGridView(DataGridView dataGridView)
         {
-            try
+            // 예시 데이터를 생성
+            List<string[]> data = new List<string[]>
             {
-                string sql = @"
+                new string[] { "1", "약품코드1", "약품명1", "수량1", "횟수1", "일수1", "용법1", "패턴1", "Gcode1" },
+                new string[] { "2", "약품코드2", "약품명2", "수량2", "횟수2", "일수2", "용법2", "패턴2", "Gcode2" },
+            };
+
+            // DataGridView에 행을 추가합니다.
+            foreach (string[] row in data)
+            {
+                dataGridView.Rows.Add(row);
+            }
+
+            // 예시 데이터가 행에 잘 추가되었는지 확인합니다.
+            Console.WriteLine("데이터가 DataGridView에 설정되었습니다.");
+        }
+        private async Task<DataTable> LoadDataAsync(string date)
+        {
+            DataTable dt = new DataTable();
+
+            // 데이터 테이블에 컬럼 추가
+            dt.Columns.Add("RP", typeof(string));
+            dt.Columns.Add("약품코드", typeof(string));
+            dt.Columns.Add("약품명", typeof(string));
+            dt.Columns.Add("수량", typeof(string));
+            dt.Columns.Add("횟수", typeof(string));
+            dt.Columns.Add("일수", typeof(string));
+            dt.Columns.Add("용법코드", typeof(string));
+            dt.Columns.Add("패턴", typeof(string));
+            dt.Columns.Add("Gcode", typeof(string));
+
+            string sql = @"
                 USE [PXDNET]
 
                 SELECT TOP 1000
@@ -387,44 +398,56 @@ namespace cWinformTest
                     M_Method.vc_FreeItem1,
                     M_TakeTime.vc_TakeTimeNm,
                     M_TakeTime.vc_TakeTimeCd
-                    
-                        
-                  FROM M_Drug
-                  INNER JOIN dbo.M_Method ON M_Drug.vc_DrugCd = M_Drug.vc_DrugCd
-                  INNER JOIN M_TakeTime ON M_TakeTime.vc_TakeTimeCd = M_TakeTime.vc_TakeTimeCd";
+         
+                FROM M_Drug
+                INNER JOIN dbo.M_Method ON M_Drug.vc_DrugCd = M_Drug.vc_DrugCd
+                INNER JOIN M_TakeTime ON M_TakeTime.vc_TakeTimeCd = M_TakeTime.vc_TakeTimeCd";
 
-
-                using (SqlCommand command = new SqlCommand(sql, SVR_CN))
+            using (SqlCommand command = new SqlCommand(sql, SVR_CN))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    // 데이터 처리
+                    while (reader.Read())
                     {
-                        // 데이터 처리
-                        while (reader.Read())
+                        string[] row = new string[]
                         {
-                            string[] row = new string[]
-                            {
-                                "0",                                 // RP
-                                reader["vc_DrugCd"].ToString(),     // 약품코드
-                                reader["vc_DrugNm"].ToString(),     // 약품명
-                                "0.0",                              // 수량
-                                reader["ln_Fraction"].ToString(),   // 횟수
-                                "0",                                // 일수
-                                reader["vc_MethodCd"].ToString(),   // 용법코드
-                                reader["vc_FreeItem1"].ToString(), // 패턴
-                                reader["vc_TakeTimeCd"].ToString()  // Gcode
-                            };
+                            "0",                // RP
+                            reader["vc_DrugCd"].ToString(),   // 약품코드
+                            reader["vc_DrugNm"].ToString(),   // 약품명
+                            "0.0",               // 수량
+                            reader["ln_Fraction"].ToString(),  // 횟수
+                            "0",                // 일수
+                            reader["vc_MethodCd"].ToString(),  // 용법코드
+                            reader["vc_FreeItem1"].ToString(), // 패턴
+                            reader["vc_TakeTimeCd"].ToString() // Gcode
+                        };
 
-                            dataGridView.Rows.Add(row);
-                        }
+                        dt.Rows.Add(row);
                     }
                 }
             }
-            catch (Exception ex)
+
+            return dt;
+        }
+        private void SetData(DataTable dt)
+        {
+            //  컬럼 설정
+            if (SS.Columns.Count == 0)
             {
-                MessageBox.Show("데이터 그리드뷰에 데이터를 설정하는데 실패했습니다: " + ex.Message);
+                foreach (DataColumn column in dt.Columns)
+                {
+                    SS.Columns.Add(column.ColumnName, column.DataType.ToString());
+                }
+            }
+
+            //  데이터 설정
+            SS.Rows.Clear();
+            foreach (DataRow row in dt.Rows)
+            {
+                SS.Rows.Add(row.ItemArray);
             }
         }
-
     }
 }
 
