@@ -150,7 +150,7 @@ namespace cWinformTest
                 // 시작 버튼 클릭 시
                 if (IsDatabaseConnected())
                 {
-                    DataTable dt = await LoadDataAsync(txtDate.Value.ToString("yyyy-MM-dd"));
+                    dt = await LoadDataAsync(txtDate.Value.ToString("yyyy-MM-dd"));
                     await StartProgressBarFillAsync();
                     SetData(dt);
                     cmdJoje.Text = "중지";
@@ -428,6 +428,8 @@ namespace cWinformTest
         }
         private async Task<DataTable> LoadDataAsync(string date)
         {
+            // 데이터 테이블 객체 만들어서 새롭게 할당
+            DataTable dt = new DataTable();
             // 데이터 테이블에 컬럼 추가
             dt.Columns.Add("RP", typeof(string));
             dt.Columns.Add("약품코드", typeof(string));
