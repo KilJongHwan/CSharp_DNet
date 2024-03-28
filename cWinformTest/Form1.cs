@@ -5,14 +5,18 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using MetroFramework.Controls;
 using MetroFramework.Forms;
 using SoapHttpClient;
 using SoapHttpClient.Enums;
+
 
 namespace cWinformTest
 {
@@ -57,7 +61,6 @@ namespace cWinformTest
         private DataTable dt;
 
         private bool isRunning;
-        private bool bDataFind;
 
         public Form1()
         {
@@ -80,20 +83,46 @@ namespace cWinformTest
             dt = new DataTable();
 
             isRunning = false;
-            bDataFind = false;
         }
         private async void Bw_DoWork(object sender, DoWorkEventArgs e)
         {
             var id = e.Argument as string;
-            //dt = await LoadDataPas(id);
+            dt = await LoadDataPas(id);
+            SetData(dt);
         }
 
+        public async Task<DataTable> LoadDataPas(string patientId)
+        {
+            var soapClient = new SoapClient();
+            var ns = XNamespace.Get("http://helio.spdf.gsfc.nasa.gov/");
 
-        //public async Task<DataTable> LoadDataPas(string patientId)
-        //{
+            var actual = await soapClient.PostAsync(
+                new Uri("https://sscweb.gsfc.nasa.gov:443/WS/helio/1/HeliocentricTrajectoriesService"),
+                SoapVersion.Soap11,
+                body: new XElement(ns.GetName("getAllObjects")));
 
-        //}
+            // SOAP 응답에서 데이터 추출
+            var responseData = XElement.Parse(actual.Content.ReadAsStringAsync().Result); // 비동기 방식으로 응답 내용 읽기
+            var objects = responseData.Descendants(ns + "object").ToList();
+            Console.WriteLine(responseData);
 
+            // DataTable 생성 및 열 정의
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Name", typeof(string));
+            dt.Columns.Add("OtherColumn", typeof(string)); // 필요에 따라 추가 열 정의
+
+            // 추출한 데이터를 DataTable에 추가
+            foreach (var obj in objects)
+            {
+                DataRow row = dt.NewRow();
+                row["Name"] = obj.Element(ns + "name").Value;
+                row["OtherColumn"] = obj.Element(ns + "otherColumn").Value; // 필요에 따라 다른 값 추가
+                dt.Rows.Add(row);
+            }
+
+            return dt;
+        }
+       
         private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
@@ -226,6 +255,7 @@ namespace cWinformTest
             while (isRunning && ProgressBar1.Value < ProgressBar1.Maximum)
             {
                 await Task.Delay(100);
+                // 델리게이트로 프로그레스 바 부드럽게 올라가게 만들기
                 ProgressBar1.Invoke(new Action(() =>
                 {
                     // 한 번에 여러 단위로 증가시켜 부드럽게 보이게 함
@@ -444,7 +474,7 @@ namespace cWinformTest
             string sql = @"
                 USE [PXDNET]
 
-                SELECT TOP 1000
+                SELECT TOP 100
                     M_Drug.vc_DrugCd,
                     M_Drug.vc_DrugNm,
                     M_Method.vc_MethodCd,
