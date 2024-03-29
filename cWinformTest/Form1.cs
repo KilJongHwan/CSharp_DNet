@@ -96,6 +96,7 @@ namespace cWinformTest
             var soapClient = new SoapClient();
             var ns = XNamespace.Get("http://helio.spdf.gsfc.nasa.gov/");
 
+            // 임시 테스트용 데이터
             var actual = await soapClient.PostAsync(
                 new Uri("https://sscweb.gsfc.nasa.gov:443/WS/helio/1/HeliocentricTrajectoriesService"),
                 SoapVersion.Soap11,
@@ -108,17 +109,34 @@ namespace cWinformTest
 
             // DataTable 생성 및 열 정의
             DataTable dt = new DataTable();
-            dt.Columns.Add("Name", typeof(string));
-            dt.Columns.Add("OtherColumn", typeof(string)); // 필요에 따라 추가 열 정의
-
+            dt.Columns.Add("RP", typeof(string));
+            dt.Columns.Add("약품코드", typeof(string));
+            dt.Columns.Add("약품명", typeof(string));
+            dt.Columns.Add("수량", typeof(string));
+            dt.Columns.Add("횟수", typeof(string));
+            dt.Columns.Add("일수", typeof(string));
+            dt.Columns.Add("용법코드", typeof(string));
+            dt.Columns.Add("패턴", typeof(string));
+            dt.Columns.Add("Gcode", typeof(string));
             // 추출한 데이터를 DataTable에 추가
             foreach (var obj in objects)
             {
                 DataRow row = dt.NewRow();
-                row["Name"] = obj.Element(ns + "name").Value;
-                row["OtherColumn"] = obj.Element(ns + "otherColumn").Value; // 필요에 따라 다른 값 추가
+
+                // XML 응답에서 데이터 추출 및 입력
+                row["RP"] = obj.Element(ns + "RP").Value;
+                row["약품코드"] = obj.Element(ns + "drugCode").Value;
+                row["약품명"] = obj.Element(ns + "drugName").Value;
+                row["수량"] = obj.Element(ns + "quantity").Value;
+                row["횟수"] = obj.Element(ns + "frequency").Value;
+                row["일수"] = obj.Element(ns + "days").Value;
+                row["용법코드"] = obj.Element(ns + "dosageCode").Value;
+                row["패턴"] = obj.Element(ns + "pattern").Value;
+                row["Gcode"] = obj.Element(ns + "Gcode").Value;
+
                 dt.Rows.Add(row);
             }
+
 
             return dt;
         }
@@ -132,7 +150,6 @@ namespace cWinformTest
             }
 
             SetData(dt);
-
             this.Enabled = true;
         }
 
@@ -201,7 +218,6 @@ namespace cWinformTest
             string userID = "sa";
             string password = "yuyama";
             bool persistSecurityInfo = true;
-            //string provider = "SQLOLEDB.1";
             int connectTimeout = 180;
 
             string connectionString = $"Data Source={dataSource};Initial Catalog={initialCatalog};User ID={userID};Password={password};Persist Security Info={persistSecurityInfo};Connect Timeout={connectTimeout}";
