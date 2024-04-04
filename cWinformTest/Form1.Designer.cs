@@ -67,8 +67,10 @@ namespace cWinformTest
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.GroupBox1.SuspendLayout();
             this.Panel2.SuspendLayout();
+            this.metroPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SS)).BeginInit();
             this.SuspendLayout();
@@ -133,8 +135,8 @@ namespace cWinformTest
             this.txtTunum.Name = "txtTunum";
             this.txtTunum.Size = new System.Drawing.Size(193, 30);
             this.txtTunum.TabIndex = 2;
-            this.txtTunum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTunum_KeyPress);
             this.txtTunum.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTunum_KeyDown);
+            this.txtTunum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTunum_KeyPress);
             // 
             // cmdJoje
             // 
@@ -252,10 +254,11 @@ namespace cWinformTest
             // metroPanel1
             // 
             this.metroPanel1.BorderStyle = MetroFramework.Drawing.MetroBorderStyle.FixedSingle;
+            this.metroPanel1.Controls.Add(this.tableLayoutPanel1);
             this.metroPanel1.HorizontalScrollbarBarColor = true;
             this.metroPanel1.HorizontalScrollbarHighlightOnWheel = false;
             this.metroPanel1.HorizontalScrollbarSize = 10;
-            this.metroPanel1.Location = new System.Drawing.Point(667, 78);
+            this.metroPanel1.Location = new System.Drawing.Point(668, 78);
             this.metroPanel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.metroPanel1.Name = "metroPanel1";
             this.metroPanel1.Size = new System.Drawing.Size(543, 258);
@@ -356,6 +359,19 @@ namespace cWinformTest
             this.Column8.Name = "Column8";
             this.Column8.Width = 125;
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(537, 258);
+            this.tableLayoutPanel1.TabIndex = 2;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -375,6 +391,7 @@ namespace cWinformTest
             this.GroupBox1.PerformLayout();
             this.Panel2.ResumeLayout(false);
             this.Panel2.PerformLayout();
+            this.metroPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SS)).EndInit();
             this.ResumeLayout(false);
@@ -443,6 +460,7 @@ namespace cWinformTest
         private DataGridViewTextBoxColumn Column6;
         private DataGridViewTextBoxColumn Column7;
         private DataGridViewTextBoxColumn Column8;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }
 

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using MetroFramework;
 using MetroFramework.Controls;
 using MetroFramework.Forms;
 using SoapHttpClient;
@@ -301,8 +302,66 @@ namespace cWinformTest
         {
             SetGridView(SS);
 
-            // 긴급 버튼 비활성화
+            // 긴급조제 버튼 비활성화
             cmdEmg.Enabled = false;
+
+            // TableLayoutPanel 생성 및 설정
+            tableLayoutPanel1.Dock = DockStyle.Fill; // 패널 전체를 채우도록 설정
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.RowCount = 3; // 3행 설정
+            tableLayoutPanel1.ColumnCount = 3; // 3열 설정
+            tableLayoutPanel1.Margin = new Padding(100);
+            tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single; // 테두리 설정
+
+            // 컨트롤 생성 및 추가
+            MetroLabel lblPatientID = new MetroLabel();
+            lblPatientID.Text = "0000000000";
+            lblPatientID.Dock = DockStyle.Fill;
+            lblPatientID.TextAlign = ContentAlignment.MiddleCenter;
+            tableLayoutPanel1.Controls.Add(lblPatientID, 0, 0);
+
+            MetroLabel lblPatientName = new MetroLabel();
+            lblPatientName.Dock = DockStyle.Fill;
+            lblPatientName.TextAlign = ContentAlignment.MiddleCenter;
+            lblPatientName.Text = "홍길동애기";
+            tableLayoutPanel1.Controls.Add(lblPatientName, 1, 0);
+
+            MetroLabel lblPatientAge = new MetroLabel();
+            lblPatientAge.Dock = DockStyle.Fill;
+            lblPatientAge.TextAlign = ContentAlignment.MiddleCenter;
+            lblPatientAge.Text = "님 / 28세";
+            tableLayoutPanel1.Controls.Add(lblPatientAge, 2, 0);
+
+            MetroLabel lblDr = new MetroLabel();
+            lblDr.Dock = DockStyle.Fill;
+            lblDr.TextAlign = ContentAlignment.MiddleCenter;
+            lblDr.Text = "진단진료과";
+            tableLayoutPanel1.Controls.Add(lblDr, 0 , 1);
+
+            MetroLabel lblDrNm = new MetroLabel();
+            lblDrNm.Dock = DockStyle.Fill;
+            lblDrNm.TextAlign = ContentAlignment.MiddleCenter;
+            lblDrNm.Text = "의사임꺽정";
+            tableLayoutPanel1.Controls.Add(lblDrNm, 1, 1);
+
+            MetroLabel lblPatentNum  = new MetroLabel();
+            lblPatentNum.Dock = DockStyle.Fill;
+            lblPatentNum.TextAlign = ContentAlignment.MiddleCenter;
+            lblPatentNum.Text = "1234567890";
+            tableLayoutPanel1.Controls.Add(lblPatentNum, 2, 1);
+
+
+            MetroLabel lblDisease = new MetroLabel();
+            lblPatentNum.Dock = DockStyle.Fill;
+            lblPatentNum.TextAlign = ContentAlignment.MiddleCenter;
+            lblDisease.Text = "감기. 몸살";
+            tableLayoutPanel1.SetColumnSpan(lblDisease, 3);
+            tableLayoutPanel1.Controls.Add(lblDisease, 0, 2);
+
+
+
+            // metroPanel1에 TableLayoutPanel 추가
+            metroPanel1.Controls.Add(tableLayoutPanel1);
         }
 
 
