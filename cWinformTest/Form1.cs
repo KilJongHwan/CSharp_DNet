@@ -197,7 +197,7 @@ namespace cWinformTest
                 // 시작 버튼 클릭 시
                 if (IsDatabaseConnected())
                 {
-                    dt = await LoadDataAsync(txtDate.Value.ToString("yyyy-MM-dd"));
+                    dt = LoadData(txtDate.Value.ToString("yyyy-MM-dd"));
                     await StartProgressBarFillAsync();
                     SetData(dt);
                     cmdJoje.Text = "중지";
@@ -305,65 +305,91 @@ namespace cWinformTest
             // 긴급조제 버튼 비활성화
             cmdEmg.Enabled = false;
 
+            LpnList();
+        }
+
+        private void LpnList()
+        {
             // TableLayoutPanel 생성 및 설정
             tableLayoutPanel1.Dock = DockStyle.Fill; // 패널 전체를 채우도록 설정
             tableLayoutPanel1.AutoSize = true;
             tableLayoutPanel1.RowCount = 3; // 3행 설정
             tableLayoutPanel1.ColumnCount = 3; // 3열 설정
-            tableLayoutPanel1.Margin = new Padding(100);
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single; // 테두리 설정
 
+
+            tableLayoutPanel1.RowStyles.Clear();
+
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33f));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33f));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33f));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+
             // 컨트롤 생성 및 추가
-            MetroLabel lblPatientID = new MetroLabel();
-            lblPatientID.Text = "0000000000";
-            lblPatientID.Dock = DockStyle.Fill;
-            lblPatientID.TextAlign = ContentAlignment.MiddleCenter;
+            MetroLabel lblPatientID = new MetroLabel
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "0000000000"
+            };
             tableLayoutPanel1.Controls.Add(lblPatientID, 0, 0);
 
-            MetroLabel lblPatientName = new MetroLabel();
-            lblPatientName.Dock = DockStyle.Fill;
-            lblPatientName.TextAlign = ContentAlignment.MiddleCenter;
-            lblPatientName.Text = "홍길동애기";
+            MetroLabel lblPatientName = new MetroLabel
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "홍길동애기"
+            };
             tableLayoutPanel1.Controls.Add(lblPatientName, 1, 0);
 
-            MetroLabel lblPatientAge = new MetroLabel();
-            lblPatientAge.Dock = DockStyle.Fill;
-            lblPatientAge.TextAlign = ContentAlignment.MiddleCenter;
-            lblPatientAge.Text = "님 / 28세";
+            MetroLabel lblPatientAge = new MetroLabel
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "님 / 28세"
+            };
             tableLayoutPanel1.Controls.Add(lblPatientAge, 2, 0);
 
-            MetroLabel lblDr = new MetroLabel();
-            lblDr.Dock = DockStyle.Fill;
-            lblDr.TextAlign = ContentAlignment.MiddleCenter;
-            lblDr.Text = "진단진료과";
-            tableLayoutPanel1.Controls.Add(lblDr, 0 , 1);
+            MetroLabel lblDr = new MetroLabel
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "진단진료과"
+            };
+            tableLayoutPanel1.Controls.Add(lblDr, 0, 1);
 
-            MetroLabel lblDrNm = new MetroLabel();
-            lblDrNm.Dock = DockStyle.Fill;
-            lblDrNm.TextAlign = ContentAlignment.MiddleCenter;
-            lblDrNm.Text = "의사임꺽정";
+            MetroLabel lblDrNm = new MetroLabel
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "의사임꺽정"
+            };
             tableLayoutPanel1.Controls.Add(lblDrNm, 1, 1);
 
-            MetroLabel lblPatentNum  = new MetroLabel();
-            lblPatentNum.Dock = DockStyle.Fill;
-            lblPatentNum.TextAlign = ContentAlignment.MiddleCenter;
-            lblPatentNum.Text = "1234567890";
+            MetroLabel lblPatentNum = new MetroLabel
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "1234567890"
+            };
             tableLayoutPanel1.Controls.Add(lblPatentNum, 2, 1);
 
+            MetroLabel lblDisease = new MetroLabel
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter, // 가운데 정렬
+                Text = "감기. 몸살"
+            };
+            tableLayoutPanel1.SetColumnSpan(lblDisease, 3); // 3열 병합 (전체 행)
 
-            MetroLabel lblDisease = new MetroLabel();
-            lblPatentNum.Dock = DockStyle.Fill;
-            lblPatentNum.TextAlign = ContentAlignment.MiddleCenter;
-            lblDisease.Text = "감기. 몸살";
-            tableLayoutPanel1.SetColumnSpan(lblDisease, 3);
-            tableLayoutPanel1.Controls.Add(lblDisease, 0, 2);
-
+            tableLayoutPanel1.Controls.Add(lblDisease);
 
 
             // metroPanel1에 TableLayoutPanel 추가
             metroPanel1.Controls.Add(tableLayoutPanel1);
         }
-
 
         private void cmdExit_Click(object sender, EventArgs e)
         {
@@ -527,11 +553,8 @@ namespace cWinformTest
             {
                 dataGridView.Rows.Add(row);
             }
-
-            // 예시 데이터가 행에 잘 추가되었는지 확인합니다.
-            Console.WriteLine("데이터가 DataGridView에 설정되었습니다.");
         }
-        private async Task<DataTable> LoadDataAsync(string date)
+        private DataTable LoadData(string date)
         {
             // 데이터 테이블 객체 만들어서 새롭게 할당
             DataTable dt = new DataTable();
@@ -569,8 +592,8 @@ namespace cWinformTest
                     // 데이터 처리
                     while (reader.Read())
                     {
-                         string[] row = new string[]
-                        {
+                        string[] row = new string[]
+                       {
                             "0",                // RP
                             reader["vc_DrugCd"].ToString(),   // 약품코드
                             reader["vc_DrugNm"].ToString(),   // 약품명
@@ -580,7 +603,7 @@ namespace cWinformTest
                             reader["vc_MethodCd"].ToString(),  // 용법코드
                             reader["vc_FreeItem1"].ToString(), // 패턴
                             reader["vc_TakeTimeCd"].ToString() // Gcode
-                        };
+                       };
 
                         dt.Rows.Add(row);
                     }
