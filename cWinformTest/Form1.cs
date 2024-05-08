@@ -78,6 +78,7 @@ namespace cWinformTest
             // Form의 Resize 이벤트 핸들러 등록
             this.Resize += Form1_Resize;
 
+            // 백그라운드처리
             bw.DoWork += Bw_DoWork;
             bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
 
@@ -305,6 +306,7 @@ namespace cWinformTest
             // 긴급조제 버튼 비활성화
             cmdEmg.Enabled = false;
 
+            // 테스트용
             LpnList();
         }
 
